@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile # Ensure this matches your Dockerfile's name
+    ports:
+      - "5000:5000" # Expose the appropriate port
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql://root:SurvivalNexus2024%40@mysql:3306/survival_nexus # Adjust this as needed
+    command: sh -c "yarn install && npx prisma migrate deploy && yarn start" # Add Yarn commands
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: SurvivalNexus2024@ # Ensure this matches your MySQL configuration
+      MYSQL_DATABASE: survival_nexus # Automatically create a database
+      MYSQL_USER: root # You can specify a custom user if needed
+      MYSQL_PASSWORD: SurvivalNexus2024@ # Set a password for the root user (optional)
+    ports:
+      - "3306:3306" # Expose MySQL port
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist MySQL data
+
+volumes:
+  mysql_data: # Define a named volume for MySQL data persistence
