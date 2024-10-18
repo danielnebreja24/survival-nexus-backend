@@ -150,22 +150,3 @@ export const addSurvivorItem = async (
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-// export const getSurvivorItems = async (req: Request, res: Response) => {
-//   try {
-//     const survivorsWithItems = await prisma.survivor.findMany({
-//       include: {
-//         inventory: {
-//           include: {
-//             item: true,
-//           },
-//         },
-//       },
-//     });
-
-//     res.status(200).json(survivorsWithItems);
-//   } catch (error: unknown) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };

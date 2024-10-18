@@ -71,15 +71,6 @@ export const tradeItems = async (req: Request, res: Response) => {
       return;
     }
 
-    // console.log(
-    //   isExistSurvivor1Item,
-    //   isExistSurvivor2Item,
-    //   traderItemQty,
-    //   receiverItemQty
-    // );
-    // res.status(200).json({ message: "Trade completed successfully" });
-    // return;
-
     if (
       isExistSurvivor1Item.quantity < traderItemQty ||
       isExistSurvivor2Item.quantity < receiverItemQty
@@ -89,7 +80,6 @@ export const tradeItems = async (req: Request, res: Response) => {
     }
 
     await prisma.$transaction(async (tx) => {
-      // DECREMENT THE TRADE ITEMS FROM EACH SURVIVOR
       await tx.survivorItem.update({
         where: { id: isExistSurvivor1Item.id },
         data: { quantity: { decrement: traderItemQty } },
@@ -100,19 +90,16 @@ export const tradeItems = async (req: Request, res: Response) => {
         data: { quantity: { decrement: receiverItemQty } },
       });
 
-      // CHECK IF SURVIVOR1 HAS RECEIVER'S ITEM, OTHERWISE CREATE IT
       const survivor1ReceiverItem = await tx.survivorItem.findFirst({
         where: { survivorId: traderId, itemId: receiverItemId },
       });
 
       if (survivor1ReceiverItem) {
-        // Increment the quantity if the item already exists
         await tx.survivorItem.update({
           where: { id: survivor1ReceiverItem.id },
           data: { quantity: { increment: receiverItemQty } },
         });
       } else {
-        // Create the new item for survivor1
         await tx.survivorItem.create({
           data: {
             survivorId: traderId,
@@ -122,19 +109,16 @@ export const tradeItems = async (req: Request, res: Response) => {
         });
       }
 
-      // CHECK IF SURVIVOR2 HAS TRADER'S ITEM, OTHERWISE CREATE IT
       const survivor2TraderItem = await tx.survivorItem.findFirst({
         where: { survivorId: receiverId, itemId: traderItemId },
       });
 
       if (survivor2TraderItem) {
-        // Increment the quantity if the item already exists
         await tx.survivorItem.update({
           where: { id: survivor2TraderItem.id },
           data: { quantity: { increment: traderItemQty } },
         });
       } else {
-        // Create the new item for survivor2
         await tx.survivorItem.create({
           data: {
             survivorId: receiverId,

@@ -5,7 +5,6 @@ import {
   getSurvivors,
   updateSurvivor,
   addSurvivorItem,
-  // getSurvivorItems,
 } from "./controllers/survivorController";
 import { tradeItems } from "./controllers/tradeController";
 import {
